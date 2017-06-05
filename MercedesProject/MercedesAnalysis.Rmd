@@ -1,0 +1,35 @@
+---
+title: "Analysis of the Mercedes Kaggle Dataset"
+output: html_notebook
+---
+
+Load the data set first
+
+```{r}
+install.packages("tidyr")
+install.packages("dplyr")
+mercedes_df <- read.csv("input/train.csv")
+```
+
+## Analyze the dataset
+```{r}
+summary(mercedes_df)
+
+```
+
+## Analyze Correlations
+```{r}
+summary(mercedes_df['y'])
+```
+
+```{r}
+library(tidyr)
+library(dplyr)
+for (x in 2:76){
+  y <- x * 5
+  z <- y + 5
+  pairs(mercedes_df[,c(2,y:z)])
+}
+
+```
+

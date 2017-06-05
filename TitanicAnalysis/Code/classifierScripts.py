@@ -17,7 +17,7 @@ def classifyNaiveBayes(features_learn, features_test):
 def classifySVM(features_learn, features_test):
     from sklearn.svm import SVC
 
-    clf = SVC()
+    clf = SVC(C = 10000, gamma = 10)
     return clf.fit(features_learn, features_test)
 
 def classifierAccuracy(predicted_labels, labels_test):

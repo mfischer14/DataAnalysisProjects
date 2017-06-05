@@ -19,6 +19,12 @@ describeData(titanic_train)
 titanic_train = performCleanup(titanic_train)
 titanic_test = performCleanup(titanic_test)
 
+def writeToFile(pred, featTest, fileName):
+    results = pd.DataFrame(columns=['PassengerId', 'Survived'])
+    results['PassengerId'] = featTest['PassengerId']
+    results['Survived'] = pred
+    #numpy.savetxt("../output/TreePredictions01.csv", pred, delimiter=",")
+    results.to_csv("../output/{}".format(fileName), header=True, index=False)
 
 # First Prediction: Based on Gender
 def evaluateMethodologies(featTrain, labelTrain):
@@ -52,17 +58,32 @@ def evaluateMethodologies(featTrain, labelTrain):
     pred = clf.predict(features_test)
     print "Tree Accuracy: {}:".format(classifierAccuracy(pred, list(labels_test)))
 
-def useMethodology(featTrain, labelTrain, featTest):
-    clf = classifyTree(featTrain, labelTrain)
-    print featTest
+def predictionMethod_ByGender(featTrain, labelTrain, featTest):
+    ### Score: 0.76555
+    pred = (featTest['Sex'] == 0) * 1
+    writeToFile(pred, featTest, "GenderPrediction01.csv")
 
+def predictionMethod_UsingTree(featTrain, labelTrain, featTest):
+    ### Score: 0.69856
+    clf = classifyTree(featTrain, labelTrain)
     pred = clf.predict(featTest)
-    results = pd.DataFrame(columns=['PassengerId', 'Survived'])
-    results['PassengerId'] = featTest['PassengerId']
-    results['Survived'] = (featTest['Sex'] == 0) * 1#pred
-    #numpy.savetxt("../output/TreePredictions01.csv", pred, delimiter=",")
-    results.to_csv("../output/TreePredictions01.csv", header=True, index=False)
+    writeToFile(pred, featTest, "TreePrediction01.csv")
+
+def predictionMethod_UsingNaiveBayes(featTrain, labelTrain, featTest):
+    ### Score: 0.73206
+    clf = classifyNaiveBayes(featTrain, labelTrain)
+    pred = clf.predict(featTest)
+    writeToFile(pred, featTest, "NaiveBayesPrediction01.csv")
+
+def predictionMethod_UsingSVM(featTrain, labelTrain, featTest):
+    ### Score: 0.73206
+    clf = classifySVM(featTrain, labelTrain)
+    pred = clf.predict(featTest)
+    writeToFile(pred, featTest, "SVMPrediction01.csv")
 
 titanicFeatures_train, titanicLabels_train = splitFeaturesFromLabels(titanic_train)
-evaluateMethodologies(titanicFeatures_train, titanicLabels_train)
-useMethodology(titanicFeatures_train, titanicLabels_train, titanic_test)
+#evaluateMethodologies(titanicFeatures_train, titanicLabels_train)
+predictionMethod_ByGender(titanicFeatures_train, titanicLabels_train, titanic_test)
+predictionMethod_UsingTree(titanicFeatures_train, titanicLabels_train, titanic_test)
+predictionMethod_UsingNaiveBayes(titanicFeatures_train, titanicLabels_train, titanic_test)
+predictionMethod_UsingSVM(titanicFeatures_train, titanicLabels_train, titanic_test)
